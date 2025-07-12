@@ -15,13 +15,134 @@ enum Role {
 
 enum Sender {
     USER
-    ESTETICAI
+    UGLOW
 }
 
 enum Gender {
     MALE
     FEMALE
     UNKNOWN
+}
+
+enum FaceShape {
+    OVAL
+    SQUARE
+    RECTANGULAR
+    TRIANGLE
+    INVERTED_TRIANGLE
+    DIAMOND
+    CIRCULAR
+    TRIANGULAR
+}
+
+enum SkinTone {
+    VERY_FAIR
+    FAIR
+    LIGHT
+    LIGHT_MEDIUM
+    MEDIUM
+    MEDIUM_TAN
+    TAN
+    DEEP_TAN
+    DEEP
+    VERY_DEEP
+    EBONY
+}
+
+enum HairTexture {
+  STRAIGHT_1A  
+  STRAIGHT_1B   
+  STRAIGHT_1C   
+
+  WAVY_2A       
+  WAVY_2B     
+  WAVY_2C       
+
+  CURLY_3A      
+  CURLY_3B     
+  CURLY_3C     
+
+  COILY_4A    
+  COILY_4B   
+  COILY_4C     
+}
+
+enum HairColor {
+  BLACK
+  DARK_BROWN
+  MEDIUM_BROWN
+  LIGHT_BROWN
+  BLONDE
+  DARK_BLONDE
+  PLATINUM_BLONDE
+  ASH_BLONDE
+  GOLDEN_BLONDE
+  RED
+  AUBURN
+  GINGER
+  COPPER
+  BURGUNDY
+  MAHOGANY
+  GREY
+  WHITE
+  BLUE
+  GREEN
+  PURPLE
+  PINK
+  SILVER
+  MULTICOLOR
+  OTHER
+}
+
+enum SignalPresence {
+  ACNE
+  MANCHAS
+  OLHEIRAS
+  LINHAS_FINAS
+  RUGAS
+}
+
+enum FacialExpression {
+  NEUTRAL
+  HAPPY
+  SAD
+  ANGRY
+  SURPRISED
+  DISGUSTED
+  FEARFUL
+  CONFUSED
+  SMIRK
+  TIRED
+  FOCUSED
+  RELAXED
+  ANXIOUS
+  OTHER
+}
+
+enum FacialSymmetry {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum PhotoLighting {
+  GOOD
+  POOR
+  HARSH_SHADOW
+  ARTIFICIAL_LIGHT
+  NATURAL_LIGHT
+}
+
+enum BackgroundType {
+  NEUTRAL
+  INDOOR
+  OUTDOOR
+}
+
+enum ImageQuality {
+  LOW
+  MEDIUM
+  HIGH
 }
 
 model User {
@@ -44,12 +165,30 @@ model Profile {
     userId String @unique @db.Uuid
     user   User   @relation(fields: [userId], references: [id])
 
-    age         Int
-    gender      Gender
-    weight      Float?
-    height      Float?
-    isPregnant  Boolean?
-    preferences Json?
+    age            Int
+    apparentAge    Int
+    gender         Gender
+    weight         Float?
+    height         Float?
+    profilePicture String
+
+    faceShape             FaceShape?
+    skinTone              SkinTone?
+    HairTexture           HairTexture?
+    HairColor             HairColor?
+    SignalPresence        SignalPresence?
+    FacialExpression      FacialExpression?
+    FacialSymmetry        FacialSymmetry?
+    PhotoLighting         PhotoLighting?
+    useOfMakeup           Boolean?
+    VisibleAccessories    String[]?
+    PhotoLighting         PhotoLighting?
+    BackgroundType        BackgroundType?
+    ImageQuality          ImageQuality?
+
+    colorPalatte          Json?
+    
+    characteristics Json?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -71,14 +210,15 @@ model Analysis {
 }
 
 model Attachment {
-    id         String   @id @default(uuid()) @db.Uuid
-    analysis   Analysis @relation(fields: [analysisId], references: [id])
-    analysisId String   @db.Uuid
+    id String @id @default(uuid()) @db.Uuid
 
     fileKey  String
     fileUrl  String
     fileName String
     mimeType String
+
+    analysisId String?   @db.Uuid
+    analysis   Analysis? @relation(fields: [analysisId], references: [id])
 
     createdAt DateTime @default(now())
 }
