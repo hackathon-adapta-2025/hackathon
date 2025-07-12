@@ -24,6 +24,31 @@ enum Gender {
     UNKNOWN
 }
 
+enum FaceShape {
+    OVAL
+    SQUARE
+    RECTANGULAR
+    TRIANGLE
+    INVERTED_TRIANGLE
+    DIAMOND
+    CIRCULAR
+    TRIANGULAR
+}
+
+enum SkinTone {
+    VERY_FAIR
+    FAIR
+    LIGHT
+    LIGHT_MEDIUM
+    MEDIUM
+    MEDIUM_TAN
+    TAN
+    DEEP_TAN
+    DEEP
+    VERY_DEEP
+    EBONY
+}
+
 model User {
     id            String  @id @db.Uuid // ID do usuário no Supabase Auth
     email         String  @unique
@@ -44,12 +69,15 @@ model Profile {
     userId String @unique @db.Uuid
     user   User   @relation(fields: [userId], references: [id])
 
-    age         Int
-    gender      Gender
-    weight      Float?
-    height      Float?
-    isPregnant  Boolean?
-    preferences Json?
+    age            Int
+    gender         Gender
+    weight         Float?
+    height         Float?
+    profilePicture String
+
+    faceShape       FaceShape?
+    skinTone        SkinTone?
+    characteristics Json?
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
@@ -71,14 +99,15 @@ model Analysis {
 }
 
 model Attachment {
-    id         String   @id @default(uuid()) @db.Uuid
-    analysis   Analysis @relation(fields: [analysisId], references: [id])
-    analysisId String   @db.Uuid
+    id String @id @default(uuid()) @db.Uuid
 
     fileKey  String
     fileUrl  String
     fileName String
     mimeType String
+
+    analysisId String?   @db.Uuid
+    analysis   Analysis? @relation(fields: [analysisId], references: [id])
 
     createdAt DateTime @default(now())
 }
