@@ -1,0 +1,95 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider  = "postgresql"
+    url       = env("DATABASE_URL")
+    directUrl = env("DIRECT_URL")
+}
+
+enum Role {
+    GLOBAL_ADMIN
+    USER
+}
+
+enum Sender {
+    USER
+    ESTETICAI
+}
+
+enum Gender {
+    MALE
+    FEMALE
+    UNKNOWN
+}
+
+model User {
+    id            String  @id @db.Uuid // ID do usuário no Supabase Auth
+    email         String  @unique
+    name          String?
+    role          Role    @default(USER)
+    avatarUrl     String?
+    creditBalance Int     @default(20)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    profile  Profile?
+    analyses Analysis[]
+}
+
+model Profile {
+    id     String @id @default(uuid()) @db.Uuid
+    userId String @unique @db.Uuid
+    user   User   @relation(fields: [userId], references: [id])
+
+    age         Int
+    gender      Gender
+    weight      Float?
+    height      Float?
+    isPregnant  Boolean?
+    preferences Json?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model Analysis {
+    id     String @id @default(uuid()) @db.Uuid
+    userId String @db.Uuid
+    user   User   @relation(fields: [userId], references: [id])
+
+    status String
+    result Json?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    attachments     Attachment[]
+    recommendations Recommendation[]
+}
+
+model Attachment {
+    id         String   @id @default(uuid()) @db.Uuid
+    analysis   Analysis @relation(fields: [analysisId], references: [id])
+    analysisId String   @db.Uuid
+
+    fileKey  String
+    fileUrl  String
+    fileName String
+    mimeType String
+
+    createdAt DateTime @default(now())
+}
+
+model Recommendation {
+    id         String   @id @default(uuid())
+    analysisId String   @db.Uuid
+    analysis   Analysis @relation(fields: [analysisId], references: [id])
+
+    title   String
+    content String
+
+    createdAt DateTime @default(now())
+}
