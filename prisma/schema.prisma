@@ -15,7 +15,7 @@ enum Role {
 
 enum Sender {
     USER
-    ESTETICAI
+    UGLOW
 }
 
 enum Gender {

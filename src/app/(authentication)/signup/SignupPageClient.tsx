@@ -58,7 +58,7 @@ export const SignupPageClient = () => {
   return (
     <AuthLayout
       title="Criar sua conta"
-      description="Registre-se para acessar o EsteticAI"
+      description="Registre-se para acessar o uGlow"
       footerText="Ao se registrar, você concorda com nossos"
     >
       <SignupForm
