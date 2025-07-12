@@ -50,99 +50,99 @@ enum SkinTone {
 }
 
 enum HairTexture {
-  STRAIGHT_1A  
-  STRAIGHT_1B   
-  STRAIGHT_1C   
+    STRAIGHT_1A
+    STRAIGHT_1B
+    STRAIGHT_1C
 
-  WAVY_2A       
-  WAVY_2B     
-  WAVY_2C       
+    WAVY_2A
+    WAVY_2B
+    WAVY_2C
 
-  CURLY_3A      
-  CURLY_3B     
-  CURLY_3C     
+    CURLY_3A
+    CURLY_3B
+    CURLY_3C
 
-  COILY_4A    
-  COILY_4B   
-  COILY_4C     
+    COILY_4A
+    COILY_4B
+    COILY_4C
 }
 
 enum HairColor {
-  BLACK
-  DARK_BROWN
-  MEDIUM_BROWN
-  LIGHT_BROWN
-  BLONDE
-  DARK_BLONDE
-  PLATINUM_BLONDE
-  ASH_BLONDE
-  GOLDEN_BLONDE
-  RED
-  AUBURN
-  GINGER
-  COPPER
-  BURGUNDY
-  MAHOGANY
-  GREY
-  WHITE
-  BLUE
-  GREEN
-  PURPLE
-  PINK
-  SILVER
-  MULTICOLOR
-  OTHER
+    BLACK
+    DARK_BROWN
+    MEDIUM_BROWN
+    LIGHT_BROWN
+    BLONDE
+    DARK_BLONDE
+    PLATINUM_BLONDE
+    ASH_BLONDE
+    GOLDEN_BLONDE
+    RED
+    AUBURN
+    GINGER
+    COPPER
+    BURGUNDY
+    MAHOGANY
+    GREY
+    WHITE
+    BLUE
+    GREEN
+    PURPLE
+    PINK
+    SILVER
+    MULTICOLOR
+    OTHER
 }
 
 enum SignalPresence {
-  ACNE
-  MANCHAS
-  OLHEIRAS
-  LINHAS_FINAS
-  RUGAS
+    ACNE
+    MANCHAS
+    OLHEIRAS
+    LINHAS_FINAS
+    RUGAS
 }
 
 enum FacialExpression {
-  NEUTRAL
-  HAPPY
-  SAD
-  ANGRY
-  SURPRISED
-  DISGUSTED
-  FEARFUL
-  CONFUSED
-  SMIRK
-  TIRED
-  FOCUSED
-  RELAXED
-  ANXIOUS
-  OTHER
+    NEUTRAL
+    HAPPY
+    SAD
+    ANGRY
+    SURPRISED
+    DISGUSTED
+    FEARFUL
+    CONFUSED
+    SMIRK
+    TIRED
+    FOCUSED
+    RELAXED
+    ANXIOUS
+    OTHER
 }
 
 enum FacialSymmetry {
-  HIGH
-  MEDIUM
-  LOW
+    HIGH
+    MEDIUM
+    LOW
 }
 
 enum PhotoLighting {
-  GOOD
-  POOR
-  HARSH_SHADOW
-  ARTIFICIAL_LIGHT
-  NATURAL_LIGHT
+    GOOD
+    POOR
+    HARSH_SHADOW
+    ARTIFICIAL_LIGHT
+    NATURAL_LIGHT
 }
 
 enum BackgroundType {
-  NEUTRAL
-  INDOOR
-  OUTDOOR
+    NEUTRAL
+    INDOOR
+    OUTDOOR
 }
 
 enum ImageQuality {
-  LOW
-  MEDIUM
-  HIGH
+    LOW
+    MEDIUM
+    HIGH
 }
 
 model User {
@@ -172,25 +172,21 @@ model Profile {
     height         Float?
     profilePicture String
 
-    faceShape             FaceShape?
-    skinTone              SkinTone?
-    HairTexture           HairTexture?
-    HairColor             HairColor?
-    SignalPresence        SignalPresence?
-    FacialExpression      FacialExpression?
-    FacialSymmetry        FacialSymmetry?
-    PhotoLighting         PhotoLighting?
-    useOfMakeup           Boolean?
-    VisibleAccessories    String[]?
-    PhotoLighting         PhotoLighting?
-    BackgroundType        BackgroundType?
-    ImageQuality          ImageQuality?
+    faceShape          FaceShape?
+    skinTone           SkinTone?
+    HairTexture        HairTexture?
+    HairColor          HairColor?
+    SignalPresence     SignalPresence?
+    FacialExpression   FacialExpression?
+    FacialSymmetry     FacialSymmetry?
+    PhotoLighting      PhotoLighting?
+    useOfMakeup        Boolean?
+    VisibleAccessories String[]
+    BackgroundType     BackgroundType?
+    ImageQuality       ImageQuality?
 
-    lon: String?
-    lat: String?
+    colorPalatte Json?
 
-    colorPalatte          Json?
-    
     characteristics Json?
 
     createdAt DateTime @default(now())

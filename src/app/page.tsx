@@ -1,103 +1,49 @@
-import Image from "next/image";
+'use client'
+
+import { Button } from '@/components/ui/button'
+import { analyzeImage } from '@/models/ai'
+import { useState } from 'react'
 
 export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+  const [result, setResult] = useState<string>('')
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
+  return (
+    <div className="flex flex-col items-center justify-center min-h-screen p-4">
+      <Button
+        onClick={async () => {
+          const callResult = await analyzeImage({
+            imageUrl:
+              'https://disparador-storage.szefezuk.com.br/disparador-prod/281477f01604170d6323d88ccf5abe1927447205f3758f73518a2e455bbeafc7.jpeg',
+            prompt: `
+            Você é um agente de IA especialista em colorimetria e teoria das cores. Sua função é atuar como um consultor de estilo digital, analisando as características de um usuário para criar uma paleta de cores personalizada e harmoniosa que realce sua beleza natural.
+
+## Objetivo Principal
+
+Com base nos atributos de tom de pele, subtom de pele e cor do cabelo e dos olhos do usuário, sua tarefa é determinar a estação de cor correspondente (ex: Outono Quente, Inverno Frio) e, a partir dela, gerar uma paleta de até 5 cores funcionais e complementares. A saída deve ser exclusivamente um objeto JSON.
+
+## Regras de Geração da Paleta:
+
+1. Análise Sazonal (Base Teórica):
+* Primeiro, determine internamente a estação de cor do usuário com base na combinação de subtom de pele, cor de cabelo e olhos.
+* O nome da paleta deve refletir essa estação.
+2. Seleção e Estrutura da Paleta
+* Com base na estação definida, gere uma paleta de exatamente 5 cores que sejam harmoniosas entre si.
+* As cores devem ser distribuídas nos seguintes papéis para garantir usabilidade:
+* cor_neutra: A base do guarda-roupa. Uma cor versátil e sofisticada (ex: off-white, bege, cinza-claro, marinho).
+* cor_primaria: A cor principal da paleta. Deve ser muito favorável ao subtom do usuário.
+* cor_secundaria_1: Uma cor que complementa diretamente a cor primária.
+* cor_secundaria_2: Uma segunda cor complementar que oferece variedade e possibilidade de combinações.
+* cor_de_acento: Uma cor mais vibrante ou profunda para ser usada em detalhes, acessórios ou para criar um ponto de destaque. Frequentemente, pode ser inspirada pela cor dos olhos.
+3. Formato das Cores:
+* Todas as cores devem ser representadas em formato de string hexadecimal (ex: '#A9C4B5').`
+          })
+          setResult(JSON.stringify(callResult, null, 2))
+        }}
+      >
+        aa
+      </Button>
+
+      {result && <pre className="mt-4 p-4 rounded">{result}</pre>}
     </div>
-  );
+  )
 }
