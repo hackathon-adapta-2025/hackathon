@@ -186,6 +186,9 @@ model Profile {
     BackgroundType        BackgroundType?
     ImageQuality          ImageQuality?
 
+    lon: String?
+    lat: String?
+
     colorPalatte          Json?
     
     characteristics Json?

@@ -1,6 +1,8 @@
 "use server";
 
 import { createClient } from "@/lib/supabaseServer";
+import getGeoLocation from "@/models/Geo";
+import getWather from "@/models/Weather";
 import { redirect } from "next/navigation";
 
 export interface ForgotPasswordState {
