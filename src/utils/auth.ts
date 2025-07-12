@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabaseServer";
 import prisma from "@/lib/prisma";
 import { cache } from "react";
 import { AppUser } from "@/models/User";
+import { redirect } from "next/navigation";
 
 // --- 1. Fetching Current User ---
 
@@ -70,3 +71,25 @@ export const getCurrentUserWithRole = cache(
     }
   }
 );
+
+/**
+ * @description [GUARDA] Garante que um usuário esteja autenticado (qualquer role).
+ *              Se o usuário não estiver autenticado, redireciona para a página de login ('/login').
+ *              Ideal para proteger páginas/layouts que requerem apenas um usuário logado.
+ *              Utiliza `getCurrentUserWithRole` internamente.
+ * @returns {Promise<AppUser>} Uma Promise que resolve para o objeto AppUser se o usuário
+ *                             estiver autenticado. A função *nunca* retorna null em caso de
+ *                             sucesso; ela redireciona se o usuário não for encontrado.
+ * @throws {never} Não lança exceções JS diretamente, mas dispara uma interrupção de renderização
+ *                 via `redirect('/login')` do Next.js se o usuário não estiver autenticado.
+ */
+export async function requireAuth(): Promise<AppUser> {
+  const user = await getCurrentUserWithRole();
+  if (!user) {
+    console.log("requireAuth: User not authenticated. Redirecting to /login.");
+    redirect("/login");
+    // O redirect() lança um erro específico que o Next.js trata,
+    // então o código abaixo dele não é executado.
+  }
+  return user; // Se chegou aqui, user não é null
+}
