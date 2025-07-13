@@ -59,6 +59,7 @@ export function useOnboardingForm() {
     mutate(data, {
       onSuccess: (result) => {
         const profileId = result.profile.id;
+
         router.push(`/profile/${profileId}`);
       },
       onError: (error: any) => {
