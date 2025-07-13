@@ -376,12 +376,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-
     // Verificar se o usuário já existe
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
-
 
     if (existingUser) {
       return withCors(
@@ -493,32 +491,39 @@ export async function POST(request: NextRequest) {
           hasImagePreview: !!imagePreviewUrl,
         };
       },
-      { timeout: 50000 }
+      { timeout: 1000000 }
     );
-
 
     const missionResult = await generateMyMission(result.profile.id);
 
-
-
-    const daysOfWeek = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sabado"];
+    const daysOfWeek = [
+      "Domingo",
+      "Segunda Feira",
+      "Terça Feira",
+      "Quarta Feira",
+      "Quinta Feira",
+      "Sexta Feira",
+      "Sabado",
+    ];
     const today = daysOfWeek[new Date().getDay()]; // Obtemos o dia atual da semana
 
     const missions = missionResult?.missions;
 
     const tasksForToday = Array.isArray(missions)
       ? missions
-      .filter((week): week is Record<string, any> =>
-        typeof week === 'object' && week !== null && 'dailyTasks' in week
-      )
-      .flatMap((week) => ({
-        ...week,
-        dailyTasks: week.dailyTasks.filter((task: Task) => task.week_day === today)
-      }))
+          .filter(
+            (week): week is Record<string, any> =>
+              typeof week === "object" && week !== null && "dailyTasks" in week
+          )
+          .flatMap((week) => ({
+            ...week,
+            dailyTasks: week.dailyTasks.filter(
+              (task: Task) => task.week_day === today
+            ),
+          }))
       : [];
 
     result.profile.missions = tasksForToday;
-
 
     return withCors(
       NextResponse.json({
@@ -530,7 +535,6 @@ export async function POST(request: NextRequest) {
         hasImagePreview: result.hasImagePreview,
       })
     );
-
   } catch (error: any) {
     console.error("Erro ao criar usuário:", error);
 
