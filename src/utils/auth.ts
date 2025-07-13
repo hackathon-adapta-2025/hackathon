@@ -44,11 +44,8 @@ export const getCurrentUserWithRole = cache(
           createdAt: true,
           profile: {
             select: {
-              age: true,
-              gender: true,
               height: true,
               weight: true,
-              isPregnant: true,
             },
           },
         },

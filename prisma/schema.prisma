@@ -18,12 +18,6 @@ enum Sender {
     UGLOW
 }
 
-enum Gender {
-    MALE
-    FEMALE
-    UNKNOWN
-}
-
 enum FaceShape {
     OVAL
     SQUARE
@@ -167,10 +161,10 @@ model Profile {
 
     birthDate      DateTime @db.Date
     apparentAge    Int?
-    gender         Gender
     weight         Float?
     height         Float?
     profilePicture String
+    imagePreview   String?
 
     faceShape          FaceShape?
     skinTone           SkinTone?

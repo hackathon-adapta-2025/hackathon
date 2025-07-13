@@ -3,20 +3,22 @@
 
 import { useMutation } from "@tanstack/react-query";
 import type { OnboardingFormData } from "@/lib/validations/onboarding";
+import { updateProfile } from "@/actions/onboarding";
 
 const updateUserProfile = async (data: OnboardingFormData) => {
-  const response = await fetch("/api/onboarding", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(data),
+  const result = await updateProfile({
+    birthDate: data.birthDate,
+    weight: data.weight,
+    height: data.height,
+    profilePicture: data.profilePicture,
+    email: data.email,
   });
 
-  if (!response.ok) {
-    const errorData = await response.json();
-    throw new Error(errorData.error || "Falha ao salvar o perfil.");
+  if (!result.success) {
+    throw new Error(result.error || "Falha ao salvar o perfil.");
   }
 
-  return response.json();
+  return result.data;
 };
 
 export const useUserProfile = () => {

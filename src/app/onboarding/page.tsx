@@ -8,7 +8,6 @@ import { Step1 } from "@/components/onboarding/step1";
 import { Step2 } from "@/components/onboarding/step2";
 import { Step3 } from "@/components/onboarding/step3";
 import { Step4 } from "@/components/onboarding/step4";
-import { Step5 } from "@/components/onboarding/step5";
 
 export default function OnboardingForm() {
   const {
@@ -36,8 +35,6 @@ export default function OnboardingForm() {
         return <Step3 form={form} />;
       case 4:
         return <Step4 form={form} />;
-      case 5:
-        return <Step5 form={form} />;
       default:
         return <Step1 form={form} />;
     }
