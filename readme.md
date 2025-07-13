@@ -1,8 +1,8 @@
 # 🧠 Menself Backend
 
-Bem-vindo ao repositório backend do **Menself**, seu coach pessoal de autocuidado masculino.
+Interface do **Menself**, o coach pessoal de autocuidado masculino que usa visão computacional e inteligência adaptativa para transformar vontade de mudança em ações práticas e personalizadas.
 
-Criado em 24h durante o Hackathon da Adapta, o Menself usa inteligência adaptativa e visão computacional para transformar a vontade de se cuidar em uma rotina prática e personalizada.
+Criado em 24h durante o Hackathon da Adapta, o app entrega uma experiência amigável e motivadora para quem quer se cuidar com ciência e naturalidade.
 
 ## 🚀 Sobre o Projeto
 
