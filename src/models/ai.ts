@@ -14,14 +14,12 @@ interface AnalyzeImageParams {
 const analysisSchema = z.object({
   tomDePele: z
     .enum(['Muito claro', 'Claro', 'Médio', 'Moreno', 'Escuro', 'Muito escuro'])
-    .describe(
-      'Cor geral da pele da pessoa, usada para definir paletas, skincare e maquiagem.'
-    ),
+    .describe('Definir paleta de cores, base para skincare e maquiagem.'),
 
   subtomDePele: z
     .enum(['Quente', 'Frio', 'Neutro'])
     .describe(
-      'Tonalidade subjacente da pele que influencia paletas e maquiagem (quente, frio ou neutro).'
+      'Paleta de cores personalizada, escolha de tons de maquiagem e roupas.'
     ),
 
   formatoDoRosto: z
@@ -33,104 +31,101 @@ const analysisSchema = z.object({
       'Triangular',
       'Retangular'
     ])
-    .describe(
-      'Formato predominante do rosto, usado para sugerir cortes de cabelo, acessórios e óculos.'
-    ),
+    .describe('Visagismo, sugestão de cortes de cabelo, óculos e acessórios.'),
 
   texturaDoCabelo: z
     .enum(['Liso', 'Ondulado', 'Cacheado', 'Crespo'])
-    .describe(
-      'Textura visível do cabelo, útil para sugerir cuidados e produtos capilares.'
-    ),
+    .describe('Rotinas de cuidado capilar, indicação de produtos.'),
 
   corDoCabelo: z
     .enum(['Preto', 'Castanho', 'Loiro', 'Ruivo', 'Grisalho', 'Colorido'])
-    .describe(
-      'Cor predominante do cabelo, usada para harmonização com paletas e recomendações.'
-    ),
+    .describe('Harmonização com paleta e produtos.'),
 
   sinaisFaciais: z
     .array(z.enum(['Acne', 'Manchas', 'Olheiras', 'Linhas finas', 'Rugas']))
     .optional()
-    .describe(
-      'Presença de sinais faciais que podem orientar recomendações de skincare.'
-    ),
+    .describe('Sugestões leves de skincare, rotina personalizada.'),
 
   idadeAparente: z
     .enum(['18–24', '25–34', '35–44', '45–54', '55+'])
-    .describe(
-      'Faixa etária estimada da pessoa, usada para calibrar linguagem e sugestões.'
-    ),
+    .describe('Ajustar linguagem e abordagem das recomendações.'),
 
   expressaoFacial: z
     .enum(['Neutra', 'Feliz', 'Cansada', 'Estressada', 'Triste'])
     .optional()
     .describe(
-      'Expressão emocional aparente no rosto, usada com sensibilidade para conteúdo motivacional.'
+      'Conteúdo motivacional, frases diárias, rotinas de autocuidado emocional.'
     ),
 
   usoDeMaquiagem: z
     .enum(['Sim', 'Não'])
-    .describe(
-      'Indica se a pessoa está usando maquiagem no momento da análise.'
-    ),
+    .describe('Calibrar sugestões de estilo e conteúdo.'),
 
   acessoriosVisiveis: z
-    .array(z.enum(['Óculos', 'Brincos', 'Colares', 'Maquiagem', 'Nenhum']))
+    .array(z.enum(['Óculos', 'Brincos', 'Colares', 'Nenhum']))
     .optional()
-    .describe(
-      'Acessórios detectáveis na imagem, que ajudam a identificar estilo ou preferências.'
-    ),
+    .describe('Estilo atual, afinidade com itens que podem ser sugeridos.'),
 
   simetriaFacial: z
     .enum(['Alta', 'Média', 'Baixa'])
     .optional()
     .describe(
-      'Nível de simetria facial percebida, usada para recomendações sutis de ângulos de fotos.'
+      'Sugestão de ângulos de foto, valorização estética (sem julgamento).'
     ),
 
   iluminacaoDaFoto: z
     .enum(['Boa', 'Ruim', 'Sombra intensa', 'Luz artificial', 'Luz natural'])
-    .describe(
-      'Condições de iluminação da imagem, usada para avaliar qualidade e orientar nova captura.'
-    ),
+    .describe('Sugestão para nova foto, ou calibração de análise.'),
 
   planoDeFundo: z
     .enum(['Neutro', 'Ambiente interno', 'Ambiente externo'])
-    .describe(
-      'Tipo de fundo na imagem, usado para entender o contexto (ex: estilo vs ocasião).'
-    ),
+    .describe('Contextualização da imagem (ex: roupa vs ocasião).'),
 
   qualidadeDaImagem: z
     .enum(['Alta', 'Média', 'Baixa'])
-    .describe(
-      'Qualidade geral da imagem fornecida, influencia a precisão da análise.'
-    ),
-  corNeutra: z
-    .string()
-    .describe(
-      'Cor neutra usada como base ou fundo, geralmente cinza ou branca'
-    ),
+    .describe('Orientar nova captura de imagem.'),
 
-  corPrimaria: z
-    .string()
-    .describe(
-      'Cor principal da identidade visual, usada em elementos predominantes'
-    ),
+  estadoDaPele: z
+    .enum(['Oleosa', 'Seca', 'Mista', 'Normal'])
+    .describe('Rotina de skincare, escolha de produtos.'),
 
-  corSecundaria_1: z
-    .string()
-    .describe('Primeira cor secundária usada para complementar a cor primária'),
+  pelosFaciais: z
+    .enum(['Nenhuma', 'Rala', 'Média', 'Cheia'])
+    .describe('Sugestões de estilo ou cuidados de barba.'),
 
-  corSecundaria_2: z
-    .string()
-    .describe('Segunda cor secundária usada para variação ou contraste leve'),
+  densidadeCapilar: z
+    .enum(['Alta', 'Média', 'Baixa', 'Recuo frontal', 'Entradas visíveis'])
+    .describe('Planejamento de corte, estilo e cuidados capilares.'),
 
-  corDeAcento: z
-    .string()
-    .describe(
-      'Cor de destaque usada para chamar atenção em elementos específicos (ex: botões ou links)'
-    )
+  proporcoesFaciais: z
+    .enum(['Harmoniosas', 'Levemente desbalanceadas', 'Desbalanceadas'])
+    .optional()
+    .describe('Sugestões de ângulos, cortes, e acessórios.'),
+
+  posturaFacial: z
+    .enum(['Correta', 'Levemente curvada', 'Curvada'])
+    .optional()
+    .describe('Inclusão de rotinas de alongamento e correção postural.'),
+
+  estadoDosLábios: z
+    .enum(['Ressecado', 'Normal', 'Hidratado'])
+    .optional()
+    .describe('Sugestões de hidratação, hábitos e autocuidado leve.'),
+
+  dentesVisiveis: z
+    .enum(['Alinhados', 'Amarelados', 'Ausentes'])
+    .optional()
+    .describe('Sugestões de autocuidado oral.'),
+
+  paletaDeCores: z.object({
+    corNeutra: z.string().describe('Cor neutra usada como base ou fundo.'),
+    corPrimaria: z.string().describe('Cor principal da identidade visual.'),
+    corSecundaria_1: z.string().describe('Primeira cor secundária.'),
+    corSecundaria_2: z.string().describe('Segunda cor secundária.'),
+    corDeAcento: z
+      .string()
+      .describe('Cor de destaque para elementos específicos.')
+  })
 })
 
 const analyzeImage = async ({ imageUrl, prompt }: AnalyzeImageParams) => {
@@ -239,3 +234,23 @@ const executeTextPrompt = async (prompt: string) => {
 }
 
 export { analyzeImage, executeTextPrompt }
+const planSchema = z.object({
+  // TODO: define the schema for the plan
+})
+
+const generatePlan = async ({ prompt }: AnalyzeImageParams) => {
+  const result = await generateObject({
+    model,
+    schema: planSchema,
+    messages: [
+      {
+        role: 'system',
+        content: prompt
+      }
+    ]
+  })
+
+  return result.object
+}
+
+export { analyzeImage, generatePlan }

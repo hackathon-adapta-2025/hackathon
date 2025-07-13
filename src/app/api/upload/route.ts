@@ -1,37 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createClient } from "@/lib/supabaseServer";
-import prisma from "@/lib/prisma";
-import { requireAuth } from "@/utils/auth";
-import { AppUser } from "@/models/User";
+import { createClient } from "@supabase/supabase-js";
+import { PrismaClient } from "@prisma/client";
+import { supabase } from "@/lib/supabaseClient";
+
+const prisma = new PrismaClient();
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: NextRequest) {
-  const supabase = await createClient();
-
   try {
     const formData = await request.formData();
     const file = formData.get("file") as File | null;
 
     if (!file) {
-      return NextResponse.json({ error: "File is required" }, { status: 400 });
+      return NextResponse.json(
+        { success: false, error: "File is required" },
+        { status: 400 }
+      );
     }
+
     if (file.size > MAX_FILE_SIZE_BYTES) {
       return NextResponse.json(
         {
+          success: false,
           error: `File size exceeds the limit of ${
             MAX_FILE_SIZE_BYTES / 1024 / 1024
           }MB`,
         },
-        { status: 413 }
+        { status: 400 }
       );
     }
 
     if (!file.type.startsWith("image/")) {
       return NextResponse.json(
-        { error: `File type '${file.type}' is not an image.` },
-        { status: 415 }
+        { success: false, error: `File type '${file.type}' is not an image.` },
+        { status: 400 }
       );
     }
 
@@ -39,6 +42,7 @@ export async function POST(request: NextRequest) {
     const uniqueFileName = `${crypto.randomUUID()}.${fileExtension}`;
     const filePath = `attachments/anonymous/${uniqueFileName}`;
 
+    // Criar registro no banco primeiro
     let attachmentRecord;
     try {
       attachmentRecord = await prisma.attachment.create({
@@ -52,23 +56,34 @@ export async function POST(request: NextRequest) {
     } catch (dbError) {
       console.error("Error creating attachment record in DB:", dbError);
       return NextResponse.json(
-        { error: "Failed to prepare attachment record." },
+        { success: false, error: "Failed to prepare attachment record." },
         { status: 500 }
       );
     }
 
+    // Converter File para ArrayBuffer para o Supabase
+    const arrayBuffer = await file.arrayBuffer();
+    const fileBuffer = new Uint8Array(arrayBuffer);
+
+    // Upload para o Supabase Storage
     const { data: uploadData, error: uploadError } = await supabase.storage
       .from("attachments")
-      .upload(filePath, file, {
+      .upload(filePath, fileBuffer, {
         contentType: file.type,
         upsert: false,
       });
 
     if (uploadError) {
-      console.error(`Supabase Storage upload error for:`, uploadError);
+      console.error("Supabase Storage upload error:", uploadError);
+
+      // Limpar registro do banco se o upload falhou
+      await prisma.attachment.delete({
+        where: { id: attachmentRecord.id },
+      });
 
       return NextResponse.json(
         {
+          success: false,
           error: "Failed to upload file to storage.",
           details: uploadError.message,
         },
@@ -76,6 +91,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Obter URL pública
     const { data: publicUrlData } = supabase.storage
       .from("attachments")
       .getPublicUrl(filePath);
@@ -83,12 +99,19 @@ export async function POST(request: NextRequest) {
     if (!publicUrlData?.publicUrl) {
       console.error(`Could not get public URL for uploaded file: ${filePath}`);
 
+      // Limpar arquivo e registro se não conseguir obter URL
+      await supabase.storage.from("attachments").remove([filePath]);
+      await prisma.attachment.delete({
+        where: { id: attachmentRecord.id },
+      });
+
       return NextResponse.json(
-        { error: "File uploaded but failed to retrieve URL. Upload reverted." },
+        { success: false, error: "File uploaded but failed to retrieve URL." },
         { status: 500 }
       );
     }
 
+    // Atualizar registro com a URL pública
     try {
       const updatedAttachment = await prisma.attachment.update({
         where: { id: attachmentRecord.id },
@@ -96,23 +119,31 @@ export async function POST(request: NextRequest) {
           fileUrl: publicUrlData.publicUrl,
         },
       });
-      return NextResponse.json(updatedAttachment);
-    } catch (finalDbError) {
-      console.error(
-        `Error updating attachment record to COMPLETED:`,
-        finalDbError
-      );
 
+      return NextResponse.json({
+        success: true,
+        data: updatedAttachment,
+      });
+    } catch (finalDbError) {
+      console.error("Error updating attachment record:", finalDbError);
       return NextResponse.json(
-        { error: "Upload complete but failed to finalize record." },
+        {
+          success: false,
+          error: "Upload complete but failed to finalize record.",
+        },
         { status: 500 }
       );
     }
   } catch (error: any) {
-    console.error(`Unhandled error in attachment upload:`, error);
+    console.error("Unhandled error in attachment upload:", error);
     return NextResponse.json(
-      { error: "An unexpected server error occurred during upload." },
+      {
+        success: false,
+        error: "An unexpected server error occurred during upload.",
+      },
       { status: 500 }
     );
+  } finally {
+    await prisma.$disconnect();
   }
 }

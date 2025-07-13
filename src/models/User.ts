@@ -1,7 +1,7 @@
 // lib/user.ts (versão atualizada)
 import prisma from "@/lib/prisma";
 import { User as SupabaseUser } from "@supabase/supabase-js";
-import { Gender, Role } from "@prisma/client";
+import { Role } from "@prisma/client";
 
 export interface User {
   id: string;
@@ -20,7 +20,6 @@ export interface AppUser {
   createdAt: Date;
   profile: {
     age: number;
-    gender: Gender;
     weight: number | null;
     height: number | null;
     isPregnant: boolean | null;

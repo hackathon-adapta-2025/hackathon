@@ -18,12 +18,6 @@ enum Sender {
     UGLOW
 }
 
-enum Gender {
-    MALE
-    FEMALE
-    UNKNOWN
-}
-
 enum FaceShape {
     OVAL
     SQUARE
@@ -165,12 +159,12 @@ model Profile {
     userId String @unique @db.Uuid
     user   User   @relation(fields: [userId], references: [id])
 
-    age            Int
-    apparentAge    Int
-    gender         Gender
+    birthDate      DateTime @db.Date
+    apparentAge    Int?
     weight         Float?
     height         Float?
     profilePicture String
+    imagePreview   String?
 
     faceShape          FaceShape?
     skinTone           SkinTone?
