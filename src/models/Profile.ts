@@ -42,11 +42,15 @@ const updateProfile = async ({
   }
 }
 
-export async function getMyProfile(id: string) {
-  return await prisma.profile.findUnique({
-    where: { id: id },
-
-  });
+const getMyProfile = async (id: string) => {
+  try {
+    const profile = await prisma.profile.findUnique({
+      where: { id: id },
+    })
+    return profile
+  } catch (error) {
+    console.error('Error updating profile:', error)
+  }
 }
 
-export { updateProfile }
+export { updateProfile, getMyProfile }
