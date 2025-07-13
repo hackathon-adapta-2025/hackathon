@@ -1,3 +1,5 @@
+![Imagem do WhatsApp de 2025-07-13 à(s) 10 16 57_e8f6a578](https://github.com/user-attachments/assets/6692420c-46d2-4a64-9de1-af984a25640d)
+
 # 🧠 Menself Backend
 
 Interface do **Menself**, o coach pessoal de autocuidado masculino que usa visão computacional e inteligência adaptativa para transformar vontade de mudança em ações práticas e personalizadas.
