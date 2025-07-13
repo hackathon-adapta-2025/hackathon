@@ -1,9 +1,12 @@
+// src/actions/onboarding.ts
 "use server";
 
 import prisma from "@/lib/prisma";
+import { parseDate } from "@/utils/parseDate";
 
 interface UpdateProfileData {
   email: string;
+  name: string; // Adicionar nome
   birthDate: string;
   weight: number;
   height: number;
@@ -11,32 +14,36 @@ interface UpdateProfileData {
 }
 
 export async function updateProfile(data: UpdateProfileData) {
-  const { email, birthDate, weight, height, profilePicture } = data;
+  const { email, name, birthDate, weight, height, profilePicture } = data;
 
   try {
-    // Buscar o usuário pelo email
-    const user = await prisma.user.findUnique({
+    const parsedBirthDate = parseDate(birthDate);
+
+    // Primeiro, criar ou buscar o usuário
+    const user = await prisma.user.upsert({
       where: { email },
+      create: {
+        id: crypto.randomUUID(),
+        email,
+        name,
+      },
+      update: {
+        name, // Atualizar nome se necessário
+      },
     });
 
-    if (!user) {
-      return {
-        success: false,
-        error: "User not found with the provided email.",
-      };
-    }
-
+    // Depois, criar ou atualizar o perfil
     const profile = await prisma.profile.upsert({
       where: { userId: user.id },
       create: {
         userId: user.id,
-        birthDate,
+        birthDate: parsedBirthDate,
         weight,
         height,
         profilePicture,
       },
       update: {
-        birthDate,
+        birthDate: parsedBirthDate,
         weight,
         height,
         profilePicture,
@@ -45,10 +52,13 @@ export async function updateProfile(data: UpdateProfileData) {
 
     return {
       success: true,
-      data: profile,
+      data: {
+        user,
+        profile,
+      },
     };
   } catch (err) {
-    console.error(err);
+    console.error("Erro ao salvar usuário e perfil:", err);
     return {
       success: false,
       error: "Erro ao salvar perfil",

@@ -9,12 +9,10 @@ import {
   onboardingSchema,
   stepSchemas,
 } from "@/lib/validations/onboarding";
-import { useRouter } from "next/navigation";
 import { useUserProfile } from "./useUserProfile";
 import { generateImagePreview } from "@/actions/generateImagePreview";
 
 export function useOnboardingForm() {
-  const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
   const isFirstStep = currentStep === 1;
@@ -62,8 +60,6 @@ export function useOnboardingForm() {
         const { url } = await generateImagePreview(data.email);
         console.log(url);
         window.location.href = url || "";
-
-        router.push(`/profile/${profile?.id}`);
       },
       onError: (error: any) => {
         console.error("Erro no onboarding:", error);

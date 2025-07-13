@@ -7,11 +7,12 @@ import { updateProfile } from "@/actions/onboarding";
 
 const updateUserProfile = async (data: OnboardingFormData) => {
   const result = await updateProfile({
+    email: data.email,
+    name: data.name,
     birthDate: data.birthDate,
     weight: data.weight,
     height: data.height,
     profilePicture: data.profilePicture,
-    email: data.email,
   });
 
   if (!result.success) {
