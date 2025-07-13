@@ -4,7 +4,7 @@ import { openai } from '@ai-sdk/openai'
 import { generateObject, generateText, tool } from 'ai'
 import { z } from 'zod'
 
-const model = openai('gpt-4o')
+const model = openai('gpt-4.1')
 
 interface AnalyzeImageParams {
   imageUrl: string
@@ -157,7 +157,7 @@ const dailyTaskSchema = z.object({
   description: z.string().describe("Descrição da tarefa diária"),
   week_day: z.enum(["Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sabado", "Domingo"]).describe("Dia da semana"),
   duration: z.string().describe("Tempo que demora para exeuctar a tarefa"),
-  frequency:  z.string().describe("Quantas vezes na semana a tarefa se repete"),
+  // frequency:  z.string().describe("Quantas vezes na semana a tarefa se repete"),
   // tips:  z.string().describe("Dicas importantes sobre a tarefa diaria em formato de tópicos"),
 });
 
@@ -211,6 +211,8 @@ const messages: any = [
   {
     role: 'user',
     content: `
+Data atual: ${new Date().toISOString()}
+
 Com base nas informações coletadas no onboarding:
 - Nome: ${userData.name}
 - Idade: ${userData.idade}
@@ -246,11 +248,11 @@ Instruções específicas:
 - Use um tom acolhedor e motivador, sem soar clínico.
 - Evite repetir exatamente a mesma tarefa mais de duas vezes por semana.
 - Comece com tarefas mais leves e vá aumentando a intensidade nas semanas seguintes.
+- É obrigatório gerar tarefas todos os dias da semana.
+- Comece com as tarefas diárias a partir do domingo
 
-Gere a resposta como um objeto JSON que esteja em conformidade com o seguinte esquema.
 
-
-Inclua 4 semanas completas, cada uma com 7 dias, e de 3 a 5 tarefas por dia. Não inclua comentários ou explicações adicionais fora do JSON. A resposta deve conter apenas o JSON.
+Inclua 4 semanas completas, cada uma com 7 dias, e de 3 a 5 tarefas por dia, A resposta deve conter apenas o JSON.
     `,
   },
 ];
