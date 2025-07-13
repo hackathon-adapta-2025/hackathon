@@ -7,14 +7,14 @@ import { generateMissions } from "@/models/ai";
 export async function generateMyMission(id_profile: string) {
   const missions = await generateMissions();
 
-  const user = await prisma.profile.update({
+  const profile = await prisma.profile.update({
     where: { id: id_profile },
     data: {
       missions: missions 
     }
   });
 
-  return user;
+  return profile;
 }
 
 export async function getMissions() {

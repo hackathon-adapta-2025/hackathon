@@ -156,7 +156,9 @@ const dailyTaskSchema = z.object({
   title: z.string().describe("Título da tarefa diária"),
   description: z.string().describe("Descrição da tarefa diária"),
   week_day: z.enum(["Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sabado", "Domingo"]).describe("Dia da semana"),
-  // Você pode adicionar mais campos aqui se precisar, por exemplo, 'dayOfWeek: z.string()'
+  duration: z.string().describe("Tempo que demora para exeuctar a tarefa"),
+  frequency:  z.string().describe("Quantas vezes na semana a tarefa se repete"),
+  // tips:  z.string().describe("Dicas importantes sobre a tarefa diaria em formato de tópicos"),
 });
 
 const weeklyMissionSchema = z.object({
