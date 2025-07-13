@@ -11,11 +11,12 @@ import {
 } from "@/lib/validations/onboarding";
 import { useRouter } from "next/navigation";
 import { useUserProfile } from "./useUserProfile";
+import { generateImagePreview } from "@/actions/generateImagePreview";
 
 export function useOnboardingForm() {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState(1);
-  const totalSteps = 5;
+  const totalSteps = 4;
   const isFirstStep = currentStep === 1;
   const isLastStep = currentStep === totalSteps;
 
@@ -57,10 +58,12 @@ export function useOnboardingForm() {
 
   const onSubmit = async (data: OnboardingFormData) => {
     mutate(data, {
-      onSuccess: (result) => {
-        const profileId = result.profile.id;
+      onSuccess: async (profile) => {
+        const { url } = await generateImagePreview(data.email);
+        console.log(url);
+        window.location.href = url || "";
 
-        router.push(`/profile/${profileId}`);
+        router.push(`/profile/${profile?.id}`);
       },
       onError: (error: any) => {
         console.error("Erro no onboarding:", error);
