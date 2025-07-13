@@ -6,6 +6,7 @@ import { z } from 'zod'
 import OpenAI, { toFile } from 'openai'
 import { createClient } from '@supabase/supabase-js'
 import { supabase } from '@/lib/supabaseClient'
+import { withCors } from '@/lib/cors'
 
 const prisma = new PrismaClient()
 const model = openai('gpt-4o')
@@ -319,9 +320,11 @@ export async function POST(request: NextRequest) {
 
     // Validação básica
     if (!name || !email || !birthDate) {
-      return NextResponse.json(
-        { error: 'Nome, email e data de nascimento são obrigatórios' },
-        { status: 400 }
+      return withCors(
+        NextResponse.json(
+          { error: 'Nome, email e data de nascimento são obrigatórios' },
+          { status: 400 }
+        )
       )
     }
 
@@ -331,9 +334,11 @@ export async function POST(request: NextRequest) {
     })
 
     if (existingUser) {
-      return NextResponse.json(
-        { error: 'Usuário já existe com este email' },
-        { status: 409 }
+      return withCors(
+        NextResponse.json(
+          { error: 'Usuário já existe com este email' },
+          { status: 409 }
+        )
       )
     }
 
@@ -438,45 +443,53 @@ export async function POST(request: NextRequest) {
       }
     })
 
-    return NextResponse.json({
-      success: true,
-      message: 'Usuário e perfil criados com sucesso',
-      user: result.user,
-      profile: result.profile,
-      hasImageAnalysis: result.hasImageAnalysis,
-      hasImagePreview: result.hasImagePreview
-    })
+    return withCors(
+      NextResponse.json({
+        success: true,
+        message: 'Usuário e perfil criados com sucesso',
+        user: result.user,
+        profile: result.profile,
+        hasImageAnalysis: result.hasImageAnalysis,
+        hasImagePreview: result.hasImagePreview
+      })
+    )
   } catch (error: any) {
     console.error('Erro ao criar usuário:', error)
 
     // Tratar erros específicos
     if (error.message?.includes('rate limit')) {
-      return NextResponse.json(
-        {
-          error:
-            'Limite de requisições atingido. Tente novamente em alguns minutos.'
-        },
-        { status: 429 }
+      return withCors(
+        NextResponse.json(
+          {
+            error:
+              'Limite de requisições atingido. Tente novamente em alguns minutos.'
+          },
+          { status: 429 }
+        )
       )
     }
 
     if (error.message?.includes('invalid image')) {
-      return NextResponse.json(
-        {
-          error:
-            'Imagem inválida. Usuário criado, mas análise não foi possível.'
-        },
-        { status: 400 }
+      return withCors(
+        NextResponse.json(
+          {
+            error:
+              'Imagem inválida. Usuário criado, mas análise não foi possível.'
+          },
+          { status: 400 }
+        )
       )
     }
 
-    return NextResponse.json(
-      {
-        error: 'Erro interno do servidor',
-        details:
-          process.env.NODE_ENV === 'development' ? error.message : undefined
-      },
-      { status: 500 }
+    return withCors(
+      NextResponse.json(
+        {
+          error: 'Erro interno do servidor',
+          details:
+            process.env.NODE_ENV === 'development' ? error.message : undefined
+        },
+        { status: 500 }
+      )
     )
   } finally {
     await prisma.$disconnect()
