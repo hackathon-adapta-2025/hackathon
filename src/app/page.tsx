@@ -1,11 +1,11 @@
-'use client'
+"use client";
 
-import { Button } from '@/components/ui/button'
-import { analyzeImage } from '@/models/ai'
-import { useState } from 'react'
+import { Button } from "@/components/ui/button";
+import { analyzeImage } from "@/models/ai";
+import { useState } from "react";
 
 export default function Home() {
-  const [result, setResult] = useState<string>('')
+  const [result, setResult] = useState<string>("");
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
@@ -13,7 +13,7 @@ export default function Home() {
         onClick={async () => {
           const callResult = await analyzeImage({
             imageUrl:
-              'https://disparador-storage.szefezuk.com.br/disparador-prod/281477f01604170d6323d88ccf5abe1927447205f3758f73518a2e455bbeafc7.jpeg',
+              "https://disparador-storage.szefezuk.com.br/disparador-prod/281477f01604170d6323d88ccf5abe1927447205f3758f73518a2e455bbeafc7.jpeg",
             prompt: `
             Você é um agente de IA especialista em colorimetria e teoria das cores. Sua função é atuar como um consultor de estilo digital, analisando as características de um usuário para criar uma paleta de cores personalizada e harmoniosa que realce sua beleza natural.
 
@@ -35,9 +35,9 @@ Com base nos atributos de tom de pele, subtom de pele e cor do cabelo e dos olho
 * cor_secundaria_2: Uma segunda cor complementar que oferece variedade e possibilidade de combinações.
 * cor_de_acento: Uma cor mais vibrante ou profunda para ser usada em detalhes, acessórios ou para criar um ponto de destaque. Frequentemente, pode ser inspirada pela cor dos olhos.
 3. Formato das Cores:
-* Todas as cores devem ser representadas em formato de string hexadecimal (ex: '#A9C4B5').`
-          })
-          setResult(JSON.stringify(callResult, null, 2))
+* Todas as cores devem ser representadas em formato de string hexadecimal (ex: '#A9C4B5').`,
+          });
+          setResult(JSON.stringify(callResult, null, 2));
         }}
       >
         aa
@@ -45,5 +45,5 @@ Com base nos atributos de tom de pele, subtom de pele e cor do cabelo e dos olho
 
       {result && <pre className="mt-4 p-4 rounded">{result}</pre>}
     </div>
-  )
+  );
 }

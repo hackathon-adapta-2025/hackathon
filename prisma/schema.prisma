@@ -165,8 +165,8 @@ model Profile {
     userId String @unique @db.Uuid
     user   User   @relation(fields: [userId], references: [id])
 
-    age            Int
-    apparentAge    Int
+    birthDate      DateTime @db.Date
+    apparentAge    Int?
     gender         Gender
     weight         Float?
     height         Float?

@@ -1,11 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabaseServer";
 import prisma from "@/lib/prisma";
-import { requireAuth } from "@/utils/auth";
-import { AppUser } from "@/models/User";
 
 const MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024; // 10MB
-const ALLOWED_FILE_TYPES = ["image/jpeg", "image/png", "image/webp"];
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
