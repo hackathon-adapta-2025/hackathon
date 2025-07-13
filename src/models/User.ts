@@ -69,3 +69,4 @@ export async function upsertUser(supabaseUser: SupabaseUser) {
 
   return { user, hasCompletedOnboarding };
 }
+
