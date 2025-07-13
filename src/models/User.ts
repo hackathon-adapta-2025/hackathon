@@ -1,3 +1,5 @@
+"use server";
+
 // lib/user.ts (versão atualizada)
 import prisma from "@/lib/prisma";
 import { User as SupabaseUser } from "@supabase/supabase-js";

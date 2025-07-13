@@ -42,4 +42,11 @@ const updateProfile = async ({
   }
 }
 
+export async function getMyProfile(id: string) {
+  return await prisma.profile.findUnique({
+    where: { id: id },
+
+  });
+}
+
 export { updateProfile }

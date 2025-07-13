@@ -1,23 +1,22 @@
 "use server";
 
 import prisma from "@/lib/prisma";
-import { executeTextPrompt } from "@/models/ai";
+import { generateMissions } from "@/models/ai";
 
 
-export async function generateMyMission(id_user: string) {
-  const prompt = "Gere uma planejamento de 5 semanas com tarefas diarias para um homem de 21 anos para saúde e estética visando 5 topicos com cada topico um passo a passo";
+export async function generateMyMission(id_profile: string) {
+  const missions = await generateMissions();
 
-//   const missions = await executeTextPrompt(prompt);
+  const user = await prisma.profile.update({
+    where: { id: id_profile },
+    data: {
+      missions: missions 
+    }
+  });
 
-  const result = await prisma.profile.findMany();
-  console.log(result, "result");
+  return user;
+}
 
-//   const user = await prisma.profile.update({
-//     where: { userId: id_user },
-//     data: {
-//       missions: missions 
-//     }
-//   });
-
-//   return user;
+export async function getMissions() {
+   
 }

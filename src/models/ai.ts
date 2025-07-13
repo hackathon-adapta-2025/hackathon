@@ -152,48 +152,10 @@ const analyzeImage = async ({ imageUrl, prompt }: AnalyzeImageParams) => {
   return result.object
 }
 
-// const weeklyMission = z.object({
-//   missionTitle: z
-//     .string()
-//     .describe('Título da missão semanal'),
-//   missionDescription: z
-//     .string()
-//     .describe('Descrição da missão semanal'),
-//   dailyTasks: z.object({
-//     monday: z.object({
-//       title: z.string().describe("Título da tarefa de segunda-feira"),
-//       description: z.string().describe("Descrição da tarefa de segunda-feira")
-//     }),
-//     tuesday: z.object({
-//       title: z.string().describe("Título da tarefa de terça-feira"),
-//       description: z.string().describe("Descrição da tarefa de terça-feira")
-//     }),
-//     wednesday: z.object({
-//       title: z.string().describe("Título da tarefa de quarta-feira"),
-//       description: z.string().describe("Descrição da tarefa de quarta-feira")
-//     }),
-//     thursday: z.object({
-//       title: z.string().describe("Título da tarefa de quinta-feira"),
-//       description: z.string().describe("Descrição da tarefa de quinta-feira")
-//     }),
-//     friday: z.object({
-//       title: z.string().describe("Título da tarefa de sexta-feira"),
-//       description: z.string().describe("Descrição da tarefa de sexta-feira")
-//     }),
-//     saturday: z.object({
-//       title: z.string().describe("Título da tarefa de sábado"),
-//       description: z.string().describe("Descrição da tarefa de sábado")
-//     }),
-//     sunday: z.object({
-//       title: z.string().describe("Título da tarefa de domingo"),
-//       description: z.string().describe("Descrição da tarefa de domingo")
-//     }),
-//   }).describe('Tarefas diárias para a semana')
-// });
-
 const dailyTaskSchema = z.object({
   title: z.string().describe("Título da tarefa diária"),
   description: z.string().describe("Descrição da tarefa diária"),
+  week_day: z.enum(["Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sabado", "Domingo"]).describe("Dia da semana"),
   // Você pode adicionar mais campos aqui se precisar, por exemplo, 'dayOfWeek: z.string()'
 });
 
@@ -218,22 +180,95 @@ const weeklyMissionContainerSchema = z.object({
 }).describe('Container para uma lista de missões semanais.');
 
 
-const executeTextPrompt = async (prompt: string) => {
+const userData = {
+  name: "Leonardo",
+  idade: "22 anos",
+  altura: "1,88",
+  peso: "73",
+  objetivo_principal: "Criar uma imagem de autoridade",
+  tempo_disponivel_por_dia: "2 horas",
+  estilo_de_vida: "passivo",
+  estilo_preferido: "",
+  formato_rosto: "trinagular"
+}
+
+const imageAnalysisData = {
+  formato_rosto: "triangular",
+  tom_pele: "pardo",
+  subtom_pele: "pardo",
+  textura_cabelo: "ondulado",
+  postura: "reta",
+  sinais_faciais: "nenhum"
+}
+
+const messages: any = [
+  {
+    role: 'system',
+    content: "Você é um assistente especializado em planos personalizados de autocuidado e valorização pessoal. Seu papel é gerar planos semanais com base em dados do usuário e análise de imagem.",
+  },
+  {
+    role: 'user',
+    content: `
+Com base nas informações coletadas no onboarding:
+- Nome: ${userData.name}
+- Idade: ${userData.idade}
+- Altura: ${userData.altura}
+- Peso: ${userData.peso}
+- Objetivo Principal: ${userData.objetivo_principal}
+- Tempo Disponível por Dia: ${userData.tempo_disponivel_por_dia}
+- Estilo de Vida: ${userData.estilo_de_vida}
+- Estilo Preferido: ${userData.estilo_preferido}
+
+E na análise da imagem do usuário:
+- Formato de Rosto: ${imageAnalysisData.formato_rosto}
+- Tom e Subtom de Pele: ${imageAnalysisData.tom_pele} (${imageAnalysisData.subtom_pele})
+- Textura do Cabelo: ${imageAnalysisData.textura_cabelo}
+- Postura: ${imageAnalysisData.postura}
+- Sinais Faciais: ${imageAnalysisData.sinais_faciais}
+
+Seu objetivo é montar um plano de 12 meses, mas gerar como saída apenas as 4 primeiras semanas.
+
+O plano deve ser dividido em dias da semana, com entre 3 e 5 tarefas por dia, e cada tarefa deve ser classificada dentro de uma das seguintes categorias:
+- Cuidados Diários
+- Estilo e Aparência
+- Postura e Corpo
+- Saúde e Energia
+- Identidade e Expressão
+- Autoestima e Motivação
+- Organização e Consistência
+- Acompanhamento Visual
+
+Instruções específicas:
+- Priorize as categorias mais alinhadas com o objetivo principal do usuário.
+- Adapte a complexidade e duração das tarefas ao tempo disponível diário informado.
+- Use um tom acolhedor e motivador, sem soar clínico.
+- Evite repetir exatamente a mesma tarefa mais de duas vezes por semana.
+- Comece com tarefas mais leves e vá aumentando a intensidade nas semanas seguintes.
+
+Gere a resposta como um objeto JSON que esteja em conformidade com o seguinte esquema.
+
+
+Inclua 4 semanas completas, cada uma com 7 dias, e de 3 a 5 tarefas por dia. Não inclua comentários ou explicações adicionais fora do JSON. A resposta deve conter apenas o JSON.
+    `,
+  },
+];
+
+const generateMissions = async () => {
   const model = openai('gpt-4o');
 
-  console.log("chegou aqui")
   const { object } = await generateObject({
     model,
-    prompt,
+    // prompt,
     schema: weeklyMissionContainerSchema,
-    toolCall: 'required',
+    messages,
+    // toolCall: 'required',
   });
 
 
   return object?.missions;
 }
 
-export { analyzeImage, executeTextPrompt }
+
 const planSchema = z.object({
   // TODO: define the schema for the plan
 })
@@ -253,4 +288,4 @@ const generatePlan = async ({ prompt }: AnalyzeImageParams) => {
   return result.object
 }
 
-export { analyzeImage, generatePlan }
+export { analyzeImage, generateMissions }
