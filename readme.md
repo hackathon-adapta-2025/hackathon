@@ -14,7 +14,8 @@ Apresentamos o Menself: seu coach pessoal de autocuidado. Criado em 24 horas de 
 •	Plano de 12 meses ajustado à rotina do usuário, com skincare, treinos, estilo e postura
 •	Pré-visualizações realistas: mudanças sutis apresentadas antes de qualquer decisão
 
-**Funcionalidades principais do backend:**
+
+**Funcionalidades principais:**
 - 📷 Upload e análise de imagem facial (visão computacional)
 - 🧠 Geração de plano de autocuidado baseado em perfil e rotina
 - 📊 API RESTful para integração com o app mobile
