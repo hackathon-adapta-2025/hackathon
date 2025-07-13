@@ -1,4 +1,3 @@
-import { generateMyMission } from '@/actions/users';
 import { getMyProfile } from '@/models/Profile';
 import { NextResponse } from 'next/server';
 
