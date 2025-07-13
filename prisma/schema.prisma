@@ -189,6 +189,9 @@ model Profile {
 
     characteristics Json?
 
+    missions Json?
+    weekStep Int @default(0)
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 }

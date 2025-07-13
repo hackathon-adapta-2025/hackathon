@@ -27,6 +27,7 @@ export interface AppUser {
   } | null;
 }
 
+
 export async function upsertUser(supabaseUser: SupabaseUser) {
   if (!supabaseUser?.email || !supabaseUser?.id) {
     throw new Error("Missing required user data");

@@ -1,7 +1,7 @@
 'use server'
 
 import { openai } from '@ai-sdk/openai'
-import { generateObject } from 'ai'
+import { generateObject, generateText, tool } from 'ai'
 import { z } from 'zod'
 
 const model = openai('gpt-4o')
@@ -157,4 +157,85 @@ const analyzeImage = async ({ imageUrl, prompt }: AnalyzeImageParams) => {
   return result.object
 }
 
-export { analyzeImage }
+// const weeklyMission = z.object({
+//   missionTitle: z
+//     .string()
+//     .describe('Título da missão semanal'),
+//   missionDescription: z
+//     .string()
+//     .describe('Descrição da missão semanal'),
+//   dailyTasks: z.object({
+//     monday: z.object({
+//       title: z.string().describe("Título da tarefa de segunda-feira"),
+//       description: z.string().describe("Descrição da tarefa de segunda-feira")
+//     }),
+//     tuesday: z.object({
+//       title: z.string().describe("Título da tarefa de terça-feira"),
+//       description: z.string().describe("Descrição da tarefa de terça-feira")
+//     }),
+//     wednesday: z.object({
+//       title: z.string().describe("Título da tarefa de quarta-feira"),
+//       description: z.string().describe("Descrição da tarefa de quarta-feira")
+//     }),
+//     thursday: z.object({
+//       title: z.string().describe("Título da tarefa de quinta-feira"),
+//       description: z.string().describe("Descrição da tarefa de quinta-feira")
+//     }),
+//     friday: z.object({
+//       title: z.string().describe("Título da tarefa de sexta-feira"),
+//       description: z.string().describe("Descrição da tarefa de sexta-feira")
+//     }),
+//     saturday: z.object({
+//       title: z.string().describe("Título da tarefa de sábado"),
+//       description: z.string().describe("Descrição da tarefa de sábado")
+//     }),
+//     sunday: z.object({
+//       title: z.string().describe("Título da tarefa de domingo"),
+//       description: z.string().describe("Descrição da tarefa de domingo")
+//     }),
+//   }).describe('Tarefas diárias para a semana')
+// });
+
+const dailyTaskSchema = z.object({
+  title: z.string().describe("Título da tarefa diária"),
+  description: z.string().describe("Descrição da tarefa diária"),
+  // Você pode adicionar mais campos aqui se precisar, por exemplo, 'dayOfWeek: z.string()'
+});
+
+const weeklyMissionSchema = z.object({
+  missionTitle: z
+    .string()
+    .describe('Título da missão semanal'),
+  missionDescription: z
+    .string()
+    .describe('Descrição da missão semanal'),
+  // Agora dailyTasks é um array de objetos dailyTaskSchema
+  dailyTasks: z.array(dailyTaskSchema)
+    .describe('Lista de tarefas diárias para a semana. Cada tarefa deve ter um título e uma descrição.'),
+});
+
+const weeklyMissionsArray = z.array(weeklyMissionSchema)
+  .describe('Uma lista de missões semanais, cada uma com seu título, descrição e tarefas diárias.');
+
+const weeklyMissionContainerSchema = z.object({
+  // This property name (e.g., 'missions') will be the key under which your array appears
+  missions: weeklyMissionsArray.describe('Uma lista de missões semanais geradas pelo modelo.'),
+}).describe('Container para uma lista de missões semanais.');
+
+
+const executeTextPrompt = async (prompt: string) => {
+  const model = openai('gpt-4o');
+
+  console.log("chegou aqui")
+  const { object } = await generateObject({
+    model,
+    prompt,
+    schema: weeklyMissionContainerSchema,
+    toolCall: 'required',
+  });
+
+
+  return object?.missions;
+}
+
+export { analyzeImage, executeTextPrompt }
