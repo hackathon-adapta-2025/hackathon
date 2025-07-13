@@ -1,13 +1,16 @@
 "use client";
 
+<<<<<<< HEAD
 import { Button } from "@/components/ui/button";
 
 import { useState } from "react";
 
+=======
+>>>>>>> e16b87b (refactor: remove unused components and hooks)
 export default function Home() {
-  const [result, setResult] = useState<string>("");
 
   return (
+<<<<<<< HEAD
     <div className="flex flex-col items-center justify-center min-h-screen p-4">
       <Button
         onClick={async () => {
@@ -45,5 +48,8 @@ export default function Home() {
 
       {result && <pre className="mt-4 p-4 rounded">{result}</pre>}
     </div>
+=======
+    <></>
+>>>>>>> e16b87b (refactor: remove unused components and hooks)
   );
 }
