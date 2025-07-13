@@ -134,7 +134,6 @@ const analysisSchema = z.object({
     )
 })
 
-// Prompt padrão para análise
 const DEFAULT_ANALYSIS_PROMPT = `
 Analise esta imagem de uma pessoa e forneça informações detalhadas sobre suas características físicas e visuais. 
 Seja preciso e objetivo nas suas observações, focando em aspectos que podem ser úteis para recomendações de estilo, 
@@ -144,7 +143,6 @@ Para as cores da paleta, sugira cores em formato hexadecimal (#RRGGBB) que compl
 Considere o tom de pele, cor do cabelo e características gerais para criar uma paleta harmoniosa.
 `
 
-// Função para gerar prompt personalizado para a imagem preview
 const generateImagePrompt = (
   analysis: any,
   preferences: string[],
@@ -191,7 +189,6 @@ const generateImagePrompt = (
   return enhancedPrompt
 }
 
-// Função para mapear dados da análise para o schema do Prisma
 const mapAnalysisToProfile = (analysis: any) => {
   return {
     faceShape: analysis.formatoDoRosto,
@@ -218,7 +215,6 @@ const mapAnalysisToProfile = (analysis: any) => {
   }
 }
 
-// Função auxiliar para converter faixa etária em número
 const getAgeFromRange = (ageRange: string): number => {
   const ageMap: { [key: string]: number } = {
     '18–24': 21,
@@ -230,7 +226,6 @@ const getAgeFromRange = (ageRange: string): number => {
   return ageMap[ageRange] || 25
 }
 
-// Função para gerar imagem preview
 const generateImagePreview = async (
   profilePictureUrl: string,
   analysis: any,
@@ -486,4 +481,15 @@ export async function POST(request: NextRequest) {
   } finally {
     await prisma.$disconnect()
   }
+}
+
+export async function OPTIONS(request: NextRequest) {
+  return new NextResponse(null, {
+    status: 204,
+    headers: {
+      'Access-Control-Allow-Origin': '*', // ou especifique o domínio exato
+      'Access-Control-Allow-Methods': 'GET,POST,OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+    }
+  })
 }
