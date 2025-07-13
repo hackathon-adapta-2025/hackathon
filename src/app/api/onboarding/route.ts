@@ -2,11 +2,12 @@ import { NextRequest, NextResponse } from "next/server";
 import { PrismaClient } from "@prisma/client";
 import { openai } from "@ai-sdk/openai";
 import { generateObject } from "ai";
-import { z } from "zod";
+import { string, z } from "zod";
 import OpenAI, { toFile } from "openai";
 import { createClient } from "@supabase/supabase-js";
 import { supabase } from "@/lib/supabaseClient";
 import { withCors } from "@/lib/cors";
+import { generateMyMission } from "@/actions/users";
 
 const prisma = new PrismaClient();
 const model = openai("gpt-4o");
@@ -371,10 +372,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
+
     // Verificar se o usuário já existe
     const existingUser = await prisma.user.findUnique({
       where: { email },
     });
+
 
     if (existingUser) {
       return withCors(
@@ -386,7 +389,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Criar usuário e perfil em uma transação
-    const result = await prisma.$transaction(
+    let result = await prisma.$transaction(
       async (tx) => {
         // Criar usuário
         const user = await tx.user.create({
@@ -489,6 +492,27 @@ export async function POST(request: NextRequest) {
       { timeout: 50000 }
     );
 
+
+    const missionResult = await generateMyMission(result.profile.id);
+
+
+
+    const daysOfWeek = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sabado"];
+    const today = daysOfWeek[new Date().getDay()]; // Obtemos o dia atual da semana
+
+    // Filtrando as tarefas para o dia de hoje
+    const tasksForToday = missionResult?.missions?.flatMap(week => {
+      return {
+        ...week,
+        dailyTasks: week.dailyTasks.filter((task: { week_day: String }) => task.week_day === today)
+      }
+    }
+
+    );
+
+    result.profile.missions = tasksForToday;
+
+
     return withCors(
       NextResponse.json({
         success: true,
@@ -499,6 +523,7 @@ export async function POST(request: NextRequest) {
         hasImagePreview: result.hasImagePreview,
       })
     );
+
   } catch (error: any) {
     console.error("Erro ao criar usuário:", error);
 
