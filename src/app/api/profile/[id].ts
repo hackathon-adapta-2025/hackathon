@@ -1,37 +1,21 @@
 import { getMyProfile } from '@/models/Profile';
+import { Profile } from '@prisma/client';
+import { NextApiRequest } from 'next';
 import { NextResponse } from 'next/server';
 
-// --- Definindo um tipo para o Usuário ---
-interface User {
-    id: number;
-    name: string;
-    email: string;
-}
-
-// --- Dados de exemplo tipados (simulando um banco de dados) ---
-let users: User[] = [
-    { id: 1, name: 'Alice', email: 'alice@example.com' },
-    { id: 2, name: 'Bob', email: 'bob@example.com' },
-];
 
 /**
  * GET /api/users
  * Retorna todos os usuários (opcionalmente filtrados por nome).
  */
-export async function GET(request: Request): Promise<NextResponse<User[]>> {
+export async function GET(req: NextApiRequest, request: Request): Promise<NextResponse<Profile | undefined | null>> {
+      const { id } = req.query;
+
     const { searchParams } = new URL(request.url);
 
     // const my_missions2 = await generateMyMission("e31d407c-7386-42e3-89fd-fc39d314340f");
-    const my_missions = await getMyProfile("e31d407c-7386-42e3-89fd-fc39d314340f");
-    //   const nameFilter = searchParams.get('name');
-
-    //   let filteredUsers = users;
-    //   if (nameFilter) {
-    // filteredUsers = users.filter(user =>
-    //   user.name.toLowerCase().includes(nameFilter.toLowerCase())
-    // );
-// }
-
+    const my_missions = await getMyProfile(id?.toString() ?? "");
+    
     // O tipo de retorno para NextResponse.json é inferido, mas podemos ser explícitos
     return NextResponse.json(my_missions, { status: 200 });
 }

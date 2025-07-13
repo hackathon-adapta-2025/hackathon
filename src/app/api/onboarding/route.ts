@@ -13,6 +13,10 @@ const prisma = new PrismaClient();
 const model = openai("gpt-4o");
 const openaiClient = new OpenAI();
 
+interface Task {
+  week_day: string;
+}
+
 const analysisSchema = z.object({
   tomDePele: z
     .enum([
@@ -500,15 +504,18 @@ export async function POST(request: NextRequest) {
     const daysOfWeek = ["Domingo", "Segunda Feira", "Terça Feira", "Quarta Feira", "Quinta Feira", "Sexta Feira", "Sabado"];
     const today = daysOfWeek[new Date().getDay()]; // Obtemos o dia atual da semana
 
-    // Filtrando as tarefas para o dia de hoje
-    const tasksForToday = missionResult?.missions?.flatMap(week => {
-      return {
-        ...week,
-        dailyTasks: week.dailyTasks.filter((task: { week_day: String }) => task.week_day === today)
-      }
-    }
+    const missions = missionResult?.missions;
 
-    );
+    const tasksForToday = Array.isArray(missions)
+      ? missions
+      .filter((week): week is Record<string, any> =>
+        typeof week === 'object' && week !== null && 'dailyTasks' in week
+      )
+      .flatMap((week) => ({
+        ...week,
+        dailyTasks: week.dailyTasks.filter((task: Task) => task.week_day === today)
+      }))
+      : [];
 
     result.profile.missions = tasksForToday;
 
